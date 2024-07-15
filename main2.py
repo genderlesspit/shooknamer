@@ -33,9 +33,10 @@ user_profile.pack(pady=20)
 #2a. User Profile opens a user profile popup
 def open_user_profile():
   user_profile_popup = TopLevel(root)
-  user_profile.pack(pady=20)
   user_profile_popup.title(f"{username} Profile")
-  signout_button = ttk.Button(user_profile_popup, text="Sign out", style = "Default", command=signout)
+  
+  signout_button = ttk.Button(user_profile_popup, text="Sign out", style = "Default", command=sign_out)
+  signout_button.pack(pady=20)
 
 def sign_out():
   user_profile_popup.destroy()
@@ -52,11 +53,11 @@ def get_matter_list():
     matter_listbox.insert(END, f"{matter_profile}.txt")
 
 #CREATE MATTER PROFILE BUTTON
-matter_button = ttk.Button(root, text="Create Matter Profile", style="Default")
+matter_button = ttk.Button(root, text="Create Matter Profile", style="Default", command=create_matter_profile)
 matter_button.pack(pady=20)
 
-def create_matter_profile:
-  def create_new_matter_profile:
+def create_matter_profile():
+  def create_new_matter_profile():
     plaintiff_name = plaintiff_name_entry.get()
     defendant_name = defendant_name_entry.get()
 
