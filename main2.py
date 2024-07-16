@@ -1,4 +1,3 @@
-#IMPORT TKINTER
 from tkinter import *
 import json
 import os
@@ -127,6 +126,9 @@ def shooknamer_login():
     login_button = Button(popup, text="Login", fg="white", bg="blue", font=default_font, command=lambda: login(username_entry.get(), password_entry.get()))
     login_button.pack(pady=20)
 
+#CALL LOGIN POPUP ON STARTUP
+shooknamer_login()
+
 #CREATE DIRECTORY FOR USER
 def create_user_dir(username):
     global user_dir
@@ -149,14 +151,7 @@ def create_user_dir(username):
         except FileExistsError:
             print(f"Subfolders already exist in {user_dir}.")
         except Exception as e:
-            print(f"Error creating subfolders in {user_dir}: {e}.")
-        
-    get_matter_list()
+            print(f"Error creating subfolders in {user_dir}: {e}")
 
 #RUN PROGRAM
-
-#Login Please
-shooknamer_login()
-
-#DASHBOARD
 root.mainloop()
