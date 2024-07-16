@@ -1,6 +1,5 @@
 #IMPORT TKINTER
 from tkinter import *
-from tkinter import ttk
 import json
 import os
 
@@ -18,136 +17,141 @@ screen_height = root.winfo_screenheight()
 root.geometry(f"{screen_width}x{screen_height}")
 
 #SET DEFAULT STYLE
-style = ttk.Style()
-style.configure("Default", foreground="white", background="blue", font=("Arial", 12, "bold"))
+default_font = ("Arial", 12, "bold")
 
 #The Dashboard is organized into the following widgets:
 #1. Welcome Label
-label = ttk.Label(root, text="Welcome to ShookNamer!", style="Default")
+label = Label(root, text="Welcome to ShookNamer!", fg="white", bg="blue", font=default_font)
 label.pack(pady=20)  # Use pack geometry manager to place the label
 
 #2. User Profile Button
-user_profile = ttk.Button(root, text=f"User Profile: {username}", style = "Default", command=open_user_profile)
+def open_user_profile():
+    user_profile_popup = Toplevel(root)
+    user_profile_popup.title(f"{username} Profile")
+
+    signout_button = Button(user_profile_popup, text="Sign out", fg="white", bg="blue", font=default_font, command=lambda: sign_out(user_profile_popup))
+    signout_button.pack(pady=20)
+
+user_profile = Button(root, text=f"User Profile: {username}", fg="white", bg="blue", font=default_font, command=open_user_profile)
 user_profile.pack(pady=20)
 
 #2a. User Profile opens a user profile popup
-def open_user_profile():
-  user_profile_popup = TopLevel(root)
-  user_profile_popup.title(f"{username} Profile")
-  
-  signout_button = ttk.Button(user_profile_popup, text="Sign out", style = "Default", command=sign_out)
-  signout_button.pack(pady=20)
+def sign_out(user_profile_popup):
+    user_profile_popup.destroy()
+    shooknamer_login()
 
-def sign_out():
-  user_profile_popup.destroy()
-  shooknamer_login()
-  
 #MATTER LISTBOX
 
-matter_listbox = ttk.Listbox(root, height=40, width=40)
+matter_listbox = Listbox(root, height=40, width=40)
 matter_listbox.pack(pady=20)
 
 def get_matter_list():
-  matter_listbox.delete(0, END)
-  for matter_profile in matter_profiles
-    matter_listbox.insert(END, f"{matter_profile}.txt")
+    matter_listbox.delete(0, END)
+    for matter_profile in matter_profiles:
+        matter_listbox.insert(END, f"{matter_profile}.txt")
 
 #CREATE MATTER PROFILE BUTTON
-matter_button = ttk.Button(root, text="Create Matter Profile", style="Default", command=create_matter_profile)
-matter_button.pack(pady=20)
-
 def create_matter_profile():
-  def create_new_matter_profile():
-    plaintiff_name = plaintiff_name_entry.get()
-    defendant_name = defendant_name_entry.get()
+    def create_new_matter_profile():
+        plaintiff_name = plaintiff_name_entry.get()
+        defendant_name = defendant_name_entry.get()
 
-    matter_profile_path = os.path.join(f"{user_dir}", "matter_profiles", f"{defendant_name_entry}")
-    if os.path.exists(matter_profile_path):
-      print(f"{matter_profile_path} already exists!") 
-    else:
-      os.makedirs(matter_profile_path)
-      
-      plaintiff_profile_path = os.path.join (f"user_dir", "matter_profiles", f"{defendant_name_entry}.txt")
-      if os.path.exists(plaintiff_profile_path):
-        print(f"{plaintiff_profile_path} already exists!")
-      else: 
-        open(plaintiff_profile_path, "w") as file:
-          file.write(f"Plaintiff Name: {plaintiff_name_entry}")
-          file.write(f"Defendant Name: {defendant_name_entry}")
-          os.rename(matter_profile_path, f"{plaintiff_name_entry}")
+        matter_profile_path = os.path.join(user_dir, "matter_profiles", defendant_name)
+        if os.path.exists(matter_profile_path):
+            print(f"{matter_profile_path} already exists!") 
+        else:
+            os.makedirs(matter_profile_path)
 
-  create_matter_profile_popup = TopLevel(root)
-  create_matter_profile_popup.title("Create Matter Profile")
-  create_matter_profile_popup.geometry("300x300")
+            plaintiff_profile_path = os.path.join(user_dir, "matter_profiles", defendant_name, f"{plaintiff_name}.txt")
+            if os.path.exists(plaintiff_profile_path):
+                print(f"{plaintiff_profile_path} already exists!")
+            else: 
+                with open(plaintiff_profile_path, "w") as file:
+                    file.write(f"Plaintiff Name: {plaintiff_name}\n")
+                    file.write(f"Defendant Name: {defendant_name}")
+                os.rename(matter_profile_path, os.path.join(user_dir, "matter_profiles", defendant_name, f"{plaintiff_name}.txt"))
 
-  plaintiff_name_label = ttk.Label(create_matter_profile_popup, text="Plaintiff Name", style="Default")
-  plaintiff_name_label.pack(pady=20)
-  plaintiff_name_entry = ttk.Entry(create_matter_profile_popup)
-  plaintiff_name_entry.pack(pady=20)
+    create_matter_profile_popup = Toplevel(root)
+    create_matter_profile_popup.title("Create Matter Profile")
+    create_matter_profile_popup.geometry("300x300")
 
-  defendant_name_label = ttk.Label(create_matter_profile_popup, text="Defendant Name", style="Default")
-  defendant_name_label.pack(pady=20)
-  defendant_name_entry = ttk.Entry(create_matter_profile_popup)
-  defendant_name_entry.pack(pady=20)
+    plaintiff_name_label = Label(create_matter_profile_popup, text="Plaintiff Name", fg="white", bg="blue", font=default_font)
+    plaintiff_name_label.pack(pady=20)
+    plaintiff_name_entry = Entry(create_matter_profile_popup)
+    plaintiff_name_entry.pack(pady=20)
+
+    defendant_name_label = Label(create_matter_profile_popup, text="Defendant Name", fg="white", bg="blue", font=default_font)
+    defendant_name_label.pack(pady=20)
+    defendant_name_entry = Entry(create_matter_profile_popup)
+    defendant_name_entry.pack(pady=20)
+
+    create_button = Button(create_matter_profile_popup, text="Create", fg="white", bg="blue", font=default_font, command=create_new_matter_profile)
+    create_button.pack(pady=20)
+
+matter_button = Button(root, text="Create Matter Profile", fg="white", bg="blue", font=default_font, command=create_matter_profile)
+matter_button.pack(pady=20)
 
 #USER DICTIONARY
 try:
-  with open("users.json", "r") as file:
-    users = json.load(file)
+    with open("users.json", "r") as file:
+        users = json.load(file)
 except FileNotFoundError:
-  users = {}
+    users = {}
 
 def save_users():
-  with open("users.json", "w") as file:
-    json.dump(users, file)
+    with open("users.json", "w") as file:
+        json.dump(users, file)
 
 #LOGIN POPUP
 def shooknamer_login():
     def login(username, password):
-      if username in users and users[username] == password:
-        print("Login Successful!")
-        popup.destroy()
-        create_user_dir(username)
-      else:
-        print("Login failed. Invalid username or password.")
-        
-  popup = TopLevel(root)
-  popup.title("ShookNamer Login")
-  popup.geometry("300x300")
+        if username in users and users[username] == password:
+            print("Login Successful!")
+            popup.destroy()
+            create_user_dir(username)
+        else:
+            print("Login failed. Invalid username or password.")
 
-  username_label = ttk.Label(popup, text="Username", style="Default")
-  username_label.pack(pady=20)
-  username_entry = ttk.Entry(popup)
-  username_entry.pack(pady=20)
-  password_label = ttk.Label(popup, text="Password", style="Default")
-  password_label.pack(pady=20)
-  password_entry = ttk.Entry(popup, show="*")
-  login_button = ttk.Button(popup, text="Login", command=lambda: login(username_entry.get(), password_entry.get()))
+    popup = Toplevel(root)
+    popup.title("ShookNamer Login")
+    popup.geometry("300x300")
+
+    username_label = Label(popup, text="Username", fg="white", bg="blue", font=default_font)
+    username_label.pack(pady=20)
+    username_entry = Entry(popup)
+    username_entry.pack(pady=20)
+    password_label = Label(popup, text="Password", fg="white", bg="blue", font=default_font)
+    password_label.pack(pady=20)
+    password_entry = Entry(popup, show="*")
+    password_entry.pack(pady=20)
+    login_button = Button(popup, text="Login", fg="white", bg="blue", font=default_font, command=lambda: login(username_entry.get(), password_entry.get()))
+    login_button.pack(pady=20)
 
 #CREATE DIRECTORY FOR USER
 def create_user_dir(username):
-  current_dir = os.getcwd()
-  user_dir = f"{username}"
-  path = os.path.join (current_dir, user_dir)
+    global user_dir
+    user_dir = os.path.join(os.getcwd(), username)
 
-  try:
-    os.makedirs(path)
-  except FileExistsError:
-    print(f"Directory '{user_dir}' already exists at {current_dir}.")
-  except Exception as e:
-    print(f"Error creating directory '{user_dir}': {e}")
+    try:
+        os.makedirs(user_dir)
+    except FileExistsError:
+        print(f"Directory '{user_dir}' already exists.")
+    except Exception as e:
+        print(f"Error creating directory '{user_dir}': {e}")
 
-  #CREATE SUBFOLDERS
-  subfolders = ["matter_profiles",] #Subfolders list
-  for folder in subfolders:
-      subfolder_path = os.path.join(path, folder)
-      try:
-        os.makedirs(subfolder_path)
-        print(f"Subfolders successfuly created in {path}.")
-      except FileExistsError:
-        print(f"Subfolders alread yexist in {path}.")
-      except Exception as e:
-        print(f"Error creating subfolders in {path}: {e}.")
+    #CREATE SUBFOLDERS
+    subfolders = ["matter_profiles",] #Subfolders list
+    for folder in subfolders:
+        subfolder_path = os.path.join(user_dir, folder)
+        try:
+            os.makedirs(subfolder_path)
+            print(f"Subfolders successfully created in {user_dir}.")
+        except FileExistsError:
+            print(f"Subfolders already exist in {user_dir}.")
+        except Exception as e:
+            print(f"Error creating subfolders in {user_dir}: {e}.")
+        
+    get_matter_list()
 
 #RUN PROGRAM
 
